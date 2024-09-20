@@ -15,7 +15,7 @@ class Menu:
         1.Restart Game
         2.Quit Game 
         '''
-        return self.display(end_menu)
+        return self.__display_choices(end_menu,2)
 
     @staticmethod
     def display(menu_text):
