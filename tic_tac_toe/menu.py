@@ -5,7 +5,7 @@ class Menu:
             1.Start Game
             2.Quit Game 
             '''
-        return self.display(main_menu)
+        return self.__display_choices(main_menu,2)
             
             
     
@@ -18,10 +18,10 @@ class Menu:
         return self.__display_choices(end_menu,2)
 
     @staticmethod
-    def display(menu_text):
+    def __display_choices(menu_text,no_of_choices):
         while True:
             choice = input(menu_text + "Please enter your choice: ")
-            if choice in ['1','2']:
+            if choice in str(range(1,no_of_choices)):
                 return choice
             print('\tInvalid choice.Please choose 1 or 2')
 
