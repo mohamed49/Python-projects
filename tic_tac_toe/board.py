@@ -1,4 +1,3 @@
-from player import Player
 class Board:
     def __init__(self) -> None:
         #this is a 3*3 list filled with each row a number from 1-3 added to 3 multiplied by row no.(start from 0)  
@@ -35,10 +34,11 @@ class Board:
     #this func. checks if the cell is empty or not to play on it, if it's empty then it assigns the symbol to the cell 
     #if it's not empty it gives an error message
     def check_cell(self,row,choice,sym):
-        if self.board[row][(choice % 3)-1].isdigit():
-            self.board[row][(choice % 3)-1] = sym
-        else:  #error message if the cell was choosen before 
-            print("this cell is taken. Choose another one!! ")
+            #this code takes the modulus of 3 for the player choice to determine which cell to add the symbol to
+            if self.board[row][(choice % 3)-1].isdigit(): 
+                self.board[row][(choice % 3)-1] = sym
+            else:  #error message if the cell was choosen before 
+                print("this cell is taken. Choose another one!! ")
 
 
 
