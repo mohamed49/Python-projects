@@ -1,22 +1,32 @@
 import pygame
 from player import Player
+from projectile import Projectile
+from enemy import Enemy
 pygame.init()
+import time
 
 pygame.display.set_caption('First Game')
 screen_width = 500
 screen_length = 480
 win = pygame.display.set_mode((screen_width,screen_length))
 clock = pygame.time.Clock()
-bg = pygame.image.load('pygame_game\\bg.jpg')
+bg = pygame.image.load('pygame_game\\resources\\bg.jpg')
 
 #redraw screen function
 def redraw_game_window():
     win.blit(bg,(0,0))
     man.draw(win)
+    
+    for bullet in bullets:
+        bullet.draw(win)
+
+    goblin.draw(win)
     pygame.display.update()
 
 #main loop
 man = Player(20,410,64,64)
+bullets = []
+goblin = Enemy(100,410,64,64,450)
 run = True
 while run:
     clock.tick(27)
@@ -27,20 +37,36 @@ while run:
             run = False
     keys = pygame.key.get_pressed()
 
+    for bullet in bullets:
+        if  bullet.x < 500 and bullet.x > 0:
+            bullet.x += bullet.vel
+        else:
+            bullets.pop(bullets.index(bullet))
+
+    if keys[pygame.K_SPACE]:
+        if man.left:
+            direction = -1
+        else:
+            direction = 1
+        
+        if len(bullets) < 5:
+            bullets.append(Projectile(round(man.x + man.char_width // 2), round(man.y + man.char_height // 2), 6, (255,0,0), direction))
+
     if keys[pygame.K_LEFT] and man.x > man.vel:
         man.x -= man.vel
         man.left = True
         man.right = False
+        man.standing = False
     elif keys[pygame.K_RIGHT] and man.x < screen_length - man.char_height - man.vel:
         man.x += man.vel
         man.left = False
         man.right = True
+        man.standing = False
     else:
-        man.left = False
-        man.right = False
+        man.standing = True
         man.walk_count = 0
     if not(man.is_jump):
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_UP]:
             man.is_jump = True
             man.walk_count = 0
             man.right = False

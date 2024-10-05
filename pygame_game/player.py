@@ -1,5 +1,8 @@
 import pygame
 class Player:
+    walk_right = [pygame.image.load('pygame_game\\resources\R1.png'), pygame.image.load('pygame_game\\resources\R2.png'), pygame.image.load('pygame_game\\resources\R3.png'), pygame.image.load('pygame_game\\resources\R4.png'), pygame.image.load('pygame_game\\resources\R5.png'), pygame.image.load('pygame_game\\resources\R6.png'), pygame.image.load('pygame_game\\resources\R7.png'), pygame.image.load('pygame_game\\resources\R8.png'), pygame.image.load('pygame_game\\resources\R9.png')]
+    walk_left = [pygame.image.load('pygame_game\\resources\L1.png'), pygame.image.load('pygame_game\\resources\L2.png'), pygame.image.load('pygame_game\\resources\L3.png'), pygame.image.load('pygame_game\\resources\L4.png'), pygame.image.load('pygame_game\\resources\L5.png'), pygame.image.load('pygame_game\\resources\L6.png'), pygame.image.load('pygame_game\\resources\L7.png'), pygame.image.load('pygame_game\\resources\L8.png'), pygame.image.load('pygame_game\\resources\L9.png')]
+    char = pygame.image.load('pygame_game\\resources\standing.png')
     def __init__(self,x,y,width,height):
         self.char_width = width
         self.char_height = height
@@ -11,18 +14,22 @@ class Player:
         self.left= False
         self.right= False
         self.walk_count = 0
-        self.char = pygame.image.load('pygame_game\standing.png')
-        self.walkRight = [pygame.image.load('pygame_game\R1.png'), pygame.image.load('pygame_game\R2.png'), pygame.image.load('pygame_game\R3.png'), pygame.image.load('pygame_game\R4.png'), pygame.image.load('pygame_game\R5.png'), pygame.image.load('pygame_game\R6.png'), pygame.image.load('pygame_game\R7.png'), pygame.image.load('pygame_game\R8.png'), pygame.image.load('pygame_game\R9.png')]
-        self.walkLeft = [pygame.image.load('pygame_game\L1.png'), pygame.image.load('pygame_game\L2.png'), pygame.image.load('pygame_game\L3.png'), pygame.image.load('pygame_game\L4.png'), pygame.image.load('pygame_game\L5.png'), pygame.image.load('pygame_game\L6.png'), pygame.image.load('pygame_game\L7.png'), pygame.image.load('pygame_game\L8.png'), pygame.image.load('pygame_game\L9.png')]
+        self.standing = False
 
     def draw(self,win):
-        if self.walk_count +1 >= 27:
-            self.walk_count = 0
-        if self.left:
-            win.blit(self.walkLeft[self.walk_count//3],(self.x,self.y))
-            self.walk_count += 1
-        elif self.right:
-            win.blit(self.walkRight[self.walk_count//3],(self.x,self.y))
-            self.walk_count += 1
+        if not(self.standing):
+            if self.walk_count +1 >= 27:
+                self.walk_count = 0
+            if self.left:
+                win.blit(self.walk_left[self.walk_count//3],(self.x,self.y))
+                self.walk_count += 1
+            elif self.right:
+                win.blit(self.walk_right[self.walk_count//3],(self.x,self.y))
+                self.walk_count += 1
         else:
-            win.blit(self.char,(self.x,self.y))
+            if (self.right):
+                win.blit(self.walk_right[0],(self.x,self.y))
+            elif(self.left):
+                win.blit(self.walk_left[0],(self.x,self.y))
+            else:
+                win.blit(self.char,(self.x,self.y))
