@@ -27,9 +27,15 @@ def redraw_game_window():
 man = Player(20,410,64,64)
 bullets = []
 goblin = Enemy(100,410,64,64,450)
+shoot_loop = 0
+score = 0
 run = True
 while run:
     clock.tick(27)
+    if shoot_loop > 0:
+        shoot_loop += 1
+    if shoot_loop > 3:
+        shoot_loop = 0
 
     #event for hitting the red "X" button to quit game
     for event in pygame.event.get():
@@ -38,12 +44,21 @@ while run:
     keys = pygame.key.get_pressed()
 
     for bullet in bullets:
+        if bullet.y - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3] and bullet.y + bullet.radius > goblin.hitbox[1]:
+            if bullet.x + bullet.radius > goblin.hitbox[0] and bullet.x - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2]:
+                goblin.hit()
+                bullets.pop(bullets.index(bullet))
+
         if  bullet.x < 500 and bullet.x > 0:
             bullet.x += bullet.vel
         else:
             bullets.pop(bullets.index(bullet))
 
-    if keys[pygame.K_SPACE]:
+    if man.hitbox[0] + man.hitbox[2] > goblin.hitbox[0] and man.hitbox[0] < goblin.hitbox[0] + goblin.hitbox[2]:
+        if man.hitbox[1] + man.hitbox[3] > goblin.hitbox[1] and man.hitbox[1] < goblin.hitbox[1] + goblin.hitbox[3]:
+            goblin.hit()
+
+    if keys[pygame.K_SPACE] and shoot_loop == 0:
         if man.left:
             direction = -1
         else:
@@ -52,12 +67,14 @@ while run:
         if len(bullets) < 5:
             bullets.append(Projectile(round(man.x + man.char_width // 2), round(man.y + man.char_height // 2), 6, (255,0,0), direction))
 
+        shoot_loop = 1
+
     if keys[pygame.K_LEFT] and man.x > man.vel:
         man.x -= man.vel
         man.left = True
         man.right = False
         man.standing = False
-    elif keys[pygame.K_RIGHT] and man.x < screen_length - man.char_height - man.vel:
+    elif keys[pygame.K_RIGHT] and man.x < screen_width - man.char_width - man.vel:
         man.x += man.vel
         man.left = False
         man.right = True
