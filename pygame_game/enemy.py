@@ -13,21 +13,25 @@ class Enemy():
         self.path = [self.x,self.end]
         self.vel = 3
         self.hitbox = (self.x + 17, self.y, 31, 60)
+        self.health = 10
+        self.visible = True
 
     def draw(self,win):
         self.move()
+        if self.visible:
+            if self.walk_count + 1 >= 33:
+                self.walk_count = 0
 
-        if self.walk_count + 1 >= 33:
-            self.walk_count = 0
-
-        if self.vel > 0:
-            win.blit(self.walk_right[self.walk_count // 3], (self.x, self.y))
-            self.walk_count += 1
-        else:
-            win.blit(self.walk_left[self.walk_count // 3], (self.x, self.y))
-            self.walk_count += 1
-        self.hitbox = (self.x+ 17, self.y, 31, 60)
-        pygame.draw.rect(win,(255,0,0),self.hitbox,2)
+            if self.vel > 0:
+                win.blit(self.walk_right[self.walk_count // 3], (self.x, self.y))
+                self.walk_count += 1
+            else:
+                win.blit(self.walk_left[self.walk_count // 3], (self.x, self.y))
+                self.walk_count += 1
+            self.hitbox = (self.x + 17, self.y, 31, 60)
+            pygame.draw.rect(win,(255,0,0),(self.hitbox[0],self.hitbox[1]-15,50 ,7))
+            pygame.draw.rect(win,(0,255,0),(self.hitbox[0],self.hitbox[1]-15,self.health *5,7))
+            # pygame.draw.rect(win,(255,0,0),self.hitbox,2)
 
     def move(self):
         if self.vel > 0:
@@ -44,4 +48,9 @@ class Enemy():
                 self.walk_count = 0
 
     def hit(self):
+        if self.health > 0 :
+            self.health -= 1
+            # self.visible = True
+        else:
+            self.visible = False
         print("hit")

@@ -3,7 +3,6 @@ from player import Player
 from projectile import Projectile
 from enemy import Enemy
 pygame.init()
-import time
 
 pygame.display.set_caption('First Game')
 screen_width = 500
@@ -11,12 +10,18 @@ screen_length = 480
 win = pygame.display.set_mode((screen_width,screen_length))
 clock = pygame.time.Clock()
 bg = pygame.image.load('pygame_game\\resources\\bg.jpg')
+music = pygame.mixer.music.load('pygame_game\\resources\\music.mp3')
+pygame.mixer.music.play(-1)
+hit_sound = pygame.mixer.Sound('pygame_game\\resources\\hit.mp3')
+bullet_sound = pygame.mixer.Sound('pygame_game\\resources\\bullet.mp3')
 
 #redraw screen function
 def redraw_game_window():
     win.blit(bg,(0,0))
     man.draw(win)
-    
+    text = font.render('Score: ' + str(score),1,(255,0,0))
+    win.blit(text,(340,10))
+
     for bullet in bullets:
         bullet.draw(win)
 
@@ -24,6 +29,7 @@ def redraw_game_window():
     pygame.display.update()
 
 #main loop
+font = pygame.font.SysFont('comicsans',28,True)
 man = Player(20,410,64,64)
 bullets = []
 goblin = Enemy(100,410,64,64,450)
@@ -47,7 +53,9 @@ while run:
         if bullet.y - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3] and bullet.y + bullet.radius > goblin.hitbox[1]:
             if bullet.x + bullet.radius > goblin.hitbox[0] and bullet.x - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2]:
                 goblin.hit()
+                score += 1
                 bullets.pop(bullets.index(bullet))
+                bullet_sound.play()
 
         if  bullet.x < 500 and bullet.x > 0:
             bullet.x += bullet.vel
@@ -56,7 +64,9 @@ while run:
 
     if man.hitbox[0] + man.hitbox[2] > goblin.hitbox[0] and man.hitbox[0] < goblin.hitbox[0] + goblin.hitbox[2]:
         if man.hitbox[1] + man.hitbox[3] > goblin.hitbox[1] and man.hitbox[1] < goblin.hitbox[1] + goblin.hitbox[3]:
-            goblin.hit()
+            # goblin.hit()
+            score -= 5
+            hit_sound.play()
 
     if keys[pygame.K_SPACE] and shoot_loop == 0:
         if man.left:
