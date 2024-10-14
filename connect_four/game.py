@@ -1,5 +1,15 @@
 import numpy as np
 from board import Board
+import pygame
+
+ROWS = 6
+COLUMNS = 7
+SQUARE_SIZE = 100
+
+pygame.display.set_caption('Connect Four')
+screen_width = (ROWS + 1) * SQUARE_SIZE
+screen_length = COLUMNS * SQUARE_SIZE
+win = pygame.display.set_mode((screen_width,screen_length))
 
 def play_turn(turn):
         #ask player number {turn} to choose a column to play on 
@@ -13,8 +23,8 @@ def play_turn(turn):
 run = True
 turn = 0
 board = Board()
-
 board.print_board()
+pygame.init()
 while run:
     play_turn(turn)
     
@@ -31,5 +41,5 @@ while run:
         run = False
     else:
         print("")
-    
+pygame.quit()
     board.print_board()
