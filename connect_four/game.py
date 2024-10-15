@@ -2,53 +2,75 @@ import numpy as np
 from board import Board
 import pygame
 
+# Size constants
 ROWS = 6
 COLUMNS = 7
 SQUARE_SIZE = 100
+SCREEN_WIDTH = (ROWS + 1) * SQUARE_SIZE
+SCREEN_LENGTH = COLUMNS * SQUARE_SIZE
+RADIUS = 48
 
+# Initialize Pygame
+pygame.init()
 pygame.display.set_caption('Connect Four')
-screen_width = (ROWS + 1) * SQUARE_SIZE
-screen_length = COLUMNS * SQUARE_SIZE
-win = pygame.display.set_mode((screen_width,screen_length))
+win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_LENGTH))
+clock = pygame.time.Clock()
 
-def play_turn(turn):
-        #ask player number {turn} to choose a column to play on 
-        col = int(input(f'Player {turn + 1} ,please enter your input (0-6) : '))
-        if board.is_valid_location(col):
-          board.drop_piece(col,turn + 1)
-        else:
-          print('this is an invalid location')
-
-#main game loop
-run = True
+# Initialize game variables
 turn = 0
 board = Board()
-board.print_board()
+bold_font = pygame.font.SysFont('comicsans', 28, True)
 
-pygame.init()
+def play_turn(turn, x_click):
+    """Handles a player's turn."""
+    col = x_click // SQUARE_SIZE
+    if board.is_valid_location(col):
+        board.drop_piece(col, turn + 1)
+    else:
+        print('This is an invalid location')
+
+def draw_hover_piece(x, turn):
+    """Draws the piece that follows the mouse cursor."""
+    pygame.draw.rect(win, "black", (0, 0, SCREEN_WIDTH, SQUARE_SIZE))
+    color = "red" if turn == 0 else "orange"
+    pygame.draw.circle(win, color, (x, SQUARE_SIZE/2), RADIUS)
+
+def check_winner():
+    """Checks for a winner and prints the result."""
+    winner = board.check_win()
+    if winner == 1:
+        print('Red wins !!')
+        text = bold_font.render('RED WINS!!!', 1, 'red')
+        win.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_LENGTH // 2 - text.get_height() // 2))
+        return True
+    elif winner == 2:
+        print('Orange wins !!')
+        text = bold_font.render('ORANGE WINS!!!', 1, 'orange')
+        win.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_LENGTH // 2 - text.get_height() // 2))
+        return True
+    return False
+
+# Main game loop
+run = True
 while run:
-    play_turn(turn)
-    
-    #event for hitting the red "X" button to quit game
+    board.draw_board(win, ROWS, COLUMNS, SQUARE_SIZE, SCREEN_LENGTH, SCREEN_WIDTH)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    keys = pygame.key.get_pressed()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            x_click = event.pos[0]
+            play_turn(turn, x_click)
+            turn = (turn + 1) % 2
+        elif event.type == pygame.MOUSEMOTION:
+            x = event.pos[0]
+            draw_hover_piece(x, turn)
 
-    #changes turns after each player plays on his turn
-    turn += 1
-    turn = turn % 2
-    
-    #check if any player wins and if so, prints a message for the winner and breaks the main loop
-    if board.check_win() == 1:
-        print('Red player wins !!')
+    if check_winner():
         run = False
-    elif board.check_win() == 2:
-        print('Blue player wins !!')
-        run = False
-    else:
-        print("")
-    
-    board.print_board()
 
+    pygame.display.update()
+    clock.tick(60)
+
+pygame.time.wait(3000)
 pygame.quit()
