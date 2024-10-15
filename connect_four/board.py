@@ -1,5 +1,7 @@
 import numpy as np
+import pygame
 
+RADIUS = 45
 class Board:
     def __init__(self) -> None:
         self.height = 6
@@ -58,3 +60,15 @@ class Board:
     
     def print_board(self):
         print(self.board)
+
+    def draw_board(self,win,rows,columns,square_size,screen_length,screen_width):
+        pygame.draw.rect(win,"blue",(0,square_size,screen_width,screen_length))
+
+        for r in range(rows):
+            for c in range(columns):
+                if self.board[r][c] == 0:
+                    pygame.draw.circle(win, "black", (square_size*c+50,square_size*r+150), RADIUS)   
+                elif self.board[r][c] == 1:
+                    pygame.draw.circle(win, "red", (square_size*c+50,square_size*r+150), RADIUS)   
+                else:
+                    pygame.draw.circle(win, "orange", (square_size*c+50,square_size*r+150), RADIUS)   
