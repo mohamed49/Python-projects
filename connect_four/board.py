@@ -7,7 +7,7 @@ class Board:
         self.height = 6
         self.width = 7
         self.board = np.zeros((self.height,self.width))
-
+        
     def drop_piece(self,col,turn):
         for i in range(self.height):
             if( self.board[self.height-1-i,col] == 0 ):
@@ -15,38 +15,39 @@ class Board:
                 break
 
     def check_win(self):
-        streak_1 = 0
-        streak_2 = 0
+        def check_axial(board,player):
+            """Check for a streak of 4 for the given player in the board vertically and horizontally."""
+            max_streak = 0
+            rows, cols = board.shape
+            for r in range(rows):    
+                for c in range(cols - 3):
+                    if board[r,c] == player:
+                        length = 1
+                        while length < 4 and board[r,c + length] == player:
+                            length += 1
+                        max_streak = max(length, max_streak)
+            return max_streak
+        
+        def check_diag(board, player):
+            """Check for a diagonal streak of 4 for the given player in the board."""
+            max_streak = 0
+            rows, cols = board.shape
+            for r in range(rows - 3):
+                for c in range(cols - 3):
+                    if board[r, c] == player:
+                        length = 1
+                        while length < 4 and board[r + length, c + length] == player:
+                            length += 1
+                        max_streak = max(length, max_streak)
+            return max_streak
+    
         orig_board = self.board
         tran_board = np.flip(orig_board.T)
+        flipped_board = np.fliplr(orig_board)
 
-        #check for horizontal win
-        for r in range(self.height):    
-            for c in range(4):
-                if (orig_board[r,c] == 1):
-                    length = 1
-                    while(length < 4 and orig_board[r,c + length] == 1):
-                        length += 1
-                    streak_1 = max (length,streak_1)
-                elif (orig_board[r,c] == 2):
-                    length = 1
-                    while(length < 4 and orig_board[r,c + length] == 2):
-                        length += 1
-                    streak_2 = max (length,streak_2)
-
-        #check for vertical win
-        for r in range(self.width):    
-            for c in range(3):
-                if (tran_board[r,c] == 1):
-                    length = 1
-                    while(length < 4 and tran_board[r,c + length] == 1):
-                        length += 1
-                    streak_1 = max (length,streak_1)
-                elif (tran_board[r,c] == 2):
-                    length = 1
-                    while(length < 4 and tran_board[r,c + length] == 2):
-                        length += 1
-                    streak_2 = max (length,streak_2)
+        # Check for horizontal, vertical ,negative diagonal and positive diagonal wins
+        streak_1 = max(check_axial(orig_board,1),check_axial(tran_board,1),check_diag(orig_board,1),check_diag(flipped_board,1))
+        streak_2 = max(check_axial(orig_board,2),check_axial(tran_board,2),check_diag(orig_board,2),check_diag(flipped_board,2))
 
         if streak_1 >= 4:
             return 1
@@ -55,8 +56,8 @@ class Board:
         else:
             return -1
 
-    def is_valid_location(self,col):
-        return self.board[0,col] == 0
+    def is_valid_location(self,cell):
+        return self.board[0,cell] == 0
     
     def print_board(self):
         print(self.board)

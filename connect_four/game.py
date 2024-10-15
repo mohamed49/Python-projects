@@ -6,8 +6,8 @@ import pygame
 ROWS = 6
 COLUMNS = 7
 SQUARE_SIZE = 100
-SCREEN_WIDTH = (ROWS + 1) * SQUARE_SIZE
-SCREEN_LENGTH = COLUMNS * SQUARE_SIZE
+SCREEN_LENGTH= (ROWS + 1) * SQUARE_SIZE
+SCREEN_WIDTH = COLUMNS * SQUARE_SIZE
 RADIUS = 48
 
 # Initialize Pygame
@@ -23,9 +23,9 @@ bold_font = pygame.font.SysFont('comicsans', 28, True)
 
 def play_turn(turn, x_click):
     """Handles a player's turn."""
-    col = x_click // SQUARE_SIZE
-    if board.is_valid_location(col):
-        board.drop_piece(col, turn + 1)
+    cell = x_click // SQUARE_SIZE
+    if board.is_valid_location(cell):
+        board.drop_piece(cell, turn + 1)
     else:
         print('This is an invalid location')
 
@@ -39,13 +39,13 @@ def check_winner():
     """Checks for a winner and prints the result."""
     winner = board.check_win()
     if winner == 1:
-        print('Red wins !!')
-        text = bold_font.render('RED WINS!!!', 1, 'red')
+        # print('Red wins !!')
+        text = bold_font.render('RED WINS!!!', 1, 'purple')
         win.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_LENGTH // 2 - text.get_height() // 2))
         return True
     elif winner == 2:
-        print('Orange wins !!')
-        text = bold_font.render('ORANGE WINS!!!', 1, 'orange')
+        # print('Orange wins !!')
+        text = bold_font.render('ORANGE WINS!!!', 1, 'purple')
         win.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_LENGTH // 2 - text.get_height() // 2))
         return True
     return False
@@ -53,8 +53,6 @@ def check_winner():
 # Main game loop
 run = True
 while run:
-    board.draw_board(win, ROWS, COLUMNS, SQUARE_SIZE, SCREEN_LENGTH, SCREEN_WIDTH)
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -66,11 +64,13 @@ while run:
             x = event.pos[0]
             draw_hover_piece(x, turn)
 
+    board.draw_board(win, ROWS, COLUMNS, SQUARE_SIZE, SCREEN_LENGTH, SCREEN_WIDTH)
+
     if check_winner():
         run = False
 
     pygame.display.update()
     clock.tick(60)
 
-pygame.time.wait(3000)
+pygame.time.wait(2000)
 pygame.quit()
